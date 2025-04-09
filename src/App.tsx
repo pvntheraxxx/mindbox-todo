@@ -1,6 +1,6 @@
 // ============================
 // Component: App
-// Description: Главный компонент приложения. Собирает TaskInput, FilterTabs, TaskList и Footer вместе. Включает переключение светлой/тёмной темы и языка.
+// Description: Главный компонент приложения. Логотип и название по центру, переключатели вынесены в отдельные компоненты.
 // ============================
 
 import React, { useMemo, useState } from 'react'
@@ -8,38 +8,35 @@ import {
   Container,
   Typography,
   Paper,
-  IconButton,
   AppBar,
   Toolbar,
   useMediaQuery,
   Box,
   CssBaseline,
   GlobalStyles,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
 } from '@mui/material'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
-import LightModeIcon from '@mui/icons-material/LightMode'
-import DarkModeIcon from '@mui/icons-material/DarkMode'
 import TaskInput from './components/TaskInput'
 import TaskList from './components/TaskList'
 import FilterTabs from './components/FilterTabs'
 import Footer from './components/Footer'
+import ThemeSwitcher from './components/ThemeSwitcher'
+import LanguageSwitcher from './components/LanguageSwitcher'
 import { useTasks } from './hooks/useTasks'
 import { getDesignTokens } from './theme'
 import { useTranslation } from 'react-i18next'
+import logo from './assets/logo.png'
+// временно заменим на ручную строку
+
 
 const App: React.FC = () => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
+  const isMobile = useMediaQuery('(max-width:768px)')
   const [mode, setMode] = useState<'light' | 'dark'>(prefersDarkMode ? 'dark' : 'light')
-
   const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode])
+  const toggleTheme = () => setMode(prev => (prev === 'light' ? 'dark' : 'light'))
 
-  const toggleTheme = () => {
-    setMode(prev => (prev === 'light' ? 'dark' : 'light'))
-  }
-
+  const { t, i18n } = useTranslation()
   const {
     tasks,
     addTask,
@@ -50,12 +47,6 @@ const App: React.FC = () => {
     setFilter,
     remainingCount,
   } = useTasks()
-
-  const { t, i18n } = useTranslation()
-
-  const handleLanguageChange = (e: SelectChangeEvent<string>) => {
-    i18n.changeLanguage(e.target.value)
-  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -84,45 +75,58 @@ const App: React.FC = () => {
           bgcolor: theme.palette.background.default,
           color: theme.palette.text.primary,
           transition: 'background-color 0.3s ease, color 0.3s ease',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         <AppBar position="static" color="transparent" elevation={0}>
           <Toolbar sx={{ justifyContent: 'space-between' }}>
-            <Select
-              value={i18n.language}
-              onChange={handleLanguageChange}
-              variant="standard"
-              disableUnderline
-              sx={{
-                color: 'text.primary',
-                fontWeight: 500,
-                minWidth: 60,
-                '& .MuiSelect-icon': {
-                  color: 'text.primary',
-                },
-              }}
-            >
-              <MenuItem value="ru">RU</MenuItem>
-              <MenuItem value="en">EN</MenuItem>
-            </Select>
-
-            <IconButton onClick={toggleTheme} sx={{ color: 'text.primary' }}>
-              {mode === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
-            </IconButton>
+            <LanguageSwitcher language={i18n.language} onChange={i18n.changeLanguage} />
+            <ThemeSwitcher mode={mode} toggleTheme={toggleTheme} />
           </Toolbar>
         </AppBar>
 
-        <Container maxWidth="sm" sx={{ mt: 5 }}>
-          <Paper sx={{ p: 3 }} elevation={4}>
-            <Typography variant="h4" component="h1" gutterBottom>
-              {t('title')}
-            </Typography>
-            <TaskInput onAdd={addTask} />
-            <FilterTabs filter={filter} setFilter={setFilter} />
-            <TaskList tasks={tasks} onToggle={toggleTask} onDelete={deleteTask} />
-            <Footer remainingCount={remainingCount} clearCompleted={clearCompleted} />
-          </Paper>
-        </Container>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column',
+            mt: 4,
+          }}
+        >
+          <img
+            src={logo}
+            alt="Logo"
+            style={{ width: '80px', height: '80px', marginBottom: '16px' }}
+          />
+          <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold' }}>
+            {t('Mindbox-Todo')}
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            flex: 1,
+            display: 'flex',
+            justifyContent: isMobile ? 'center' : 'flex-start',
+            alignItems: isMobile ? 'center' : 'flex-start',
+            px: 2,
+            mt: isMobile ? 0 : 5,
+          }}
+        >
+          <Container maxWidth="sm">
+            <Paper sx={{ p: 3 }} elevation={4}>
+              <Typography variant="h4" component="h1" gutterBottom>
+                {t('title')}
+              </Typography>
+              <TaskInput onAdd={addTask} />
+              <FilterTabs filter={filter} setFilter={setFilter} />
+              <TaskList tasks={tasks} onToggle={toggleTask} onDelete={deleteTask} />
+              <Footer remainingCount={remainingCount} clearCompleted={clearCompleted} />
+            </Paper>
+          </Container>
+        </Box>
       </Box>
     </ThemeProvider>
   )
