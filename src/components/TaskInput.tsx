@@ -6,6 +6,7 @@
 import React, { useState } from 'react'
 import { TextField, IconButton, Paper } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
+import { useTranslation } from 'react-i18next'
 
 interface TaskInputProps {
   onAdd: (title: string) => void
@@ -13,6 +14,7 @@ interface TaskInputProps {
 
 const TaskInput: React.FC<TaskInputProps> = ({ onAdd }) => {
   const [value, setValue] = useState('')
+  const { t } = useTranslation()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,7 +36,7 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAdd }) => {
         fullWidth
         variant="outlined"
         size="small"
-        placeholder="Добавить новую задачу..."
+        placeholder={t('placeholder')}
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />

@@ -1,6 +1,6 @@
 // ============================
 // Component: App
-// Description: Главный компонент приложения. Собирает TaskInput, FilterTabs, TaskList и Footer вместе. Включает переключение светлой/тёмной темы.
+// Description: Главный компонент приложения. Собирает TaskInput, FilterTabs, TaskList и Footer вместе. Включает переключение светлой/тёмной темы и языка.
 // ============================
 
 import React, { useMemo, useState } from 'react'
@@ -15,6 +15,9 @@ import {
   Box,
   CssBaseline,
   GlobalStyles,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
 } from '@mui/material'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import LightModeIcon from '@mui/icons-material/LightMode'
@@ -25,6 +28,7 @@ import FilterTabs from './components/FilterTabs'
 import Footer from './components/Footer'
 import { useTasks } from './hooks/useTasks'
 import { getDesignTokens } from './theme'
+import { useTranslation } from 'react-i18next'
 
 const App: React.FC = () => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
@@ -46,6 +50,12 @@ const App: React.FC = () => {
     setFilter,
     remainingCount,
   } = useTasks()
+
+  const { t, i18n } = useTranslation()
+
+  const handleLanguageChange = (e: SelectChangeEvent<string>) => {
+    i18n.changeLanguage(e.target.value)
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -77,7 +87,25 @@ const App: React.FC = () => {
         }}
       >
         <AppBar position="static" color="transparent" elevation={0}>
-          <Toolbar sx={{ justifyContent: 'flex-end' }}>
+          <Toolbar sx={{ justifyContent: 'space-between' }}>
+            <Select
+              value={i18n.language}
+              onChange={handleLanguageChange}
+              variant="standard"
+              disableUnderline
+              sx={{
+                color: 'text.primary',
+                fontWeight: 500,
+                minWidth: 60,
+                '& .MuiSelect-icon': {
+                  color: 'text.primary',
+                },
+              }}
+            >
+              <MenuItem value="ru">RU</MenuItem>
+              <MenuItem value="en">EN</MenuItem>
+            </Select>
+
             <IconButton onClick={toggleTheme} sx={{ color: 'text.primary' }}>
               {mode === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
             </IconButton>
@@ -87,7 +115,7 @@ const App: React.FC = () => {
         <Container maxWidth="sm" sx={{ mt: 5 }}>
           <Paper sx={{ p: 3 }} elevation={4}>
             <Typography variant="h4" component="h1" gutterBottom>
-              Мои задачи
+              {t('title')}
             </Typography>
             <TaskInput onAdd={addTask} />
             <FilterTabs filter={filter} setFilter={setFilter} />

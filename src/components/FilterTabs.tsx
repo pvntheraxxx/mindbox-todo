@@ -6,6 +6,7 @@
 import React from 'react'
 import { Tabs, Tab, Paper } from '@mui/material'
 import { Filter } from '../hooks/useTasks'
+import { useTranslation } from 'react-i18next'
 
 interface FilterTabsProps {
   filter: Filter
@@ -13,6 +14,8 @@ interface FilterTabsProps {
 }
 
 const FilterTabs: React.FC<FilterTabsProps> = ({ filter, setFilter }) => {
+  const { t } = useTranslation()
+
   const handleChange = (_: React.SyntheticEvent, newValue: Filter) => {
     setFilter(newValue)
   }
@@ -26,9 +29,9 @@ const FilterTabs: React.FC<FilterTabsProps> = ({ filter, setFilter }) => {
         textColor="primary"
         variant="fullWidth"
       >
-        <Tab value="all" label="Все" />
-        <Tab value="active" label="Активные" />
-        <Tab value="completed" label="Завершённые" />
+        <Tab value="all" label={t('all')} />
+        <Tab value="active" label={t('active')} />
+        <Tab value="completed" label={t('completed')} />
       </Tabs>
     </Paper>
   )

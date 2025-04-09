@@ -7,6 +7,7 @@ import React from 'react'
 import { List, Typography } from '@mui/material'
 import TaskItem from './TaskItem'
 import { Task } from '../types/task'
+import { useTranslation } from 'react-i18next'
 
 interface TaskListProps {
   tasks: Task[]
@@ -15,8 +16,14 @@ interface TaskListProps {
 }
 
 const TaskList: React.FC<TaskListProps> = ({ tasks, onToggle, onDelete }) => {
+  const { t } = useTranslation()
+
   if (tasks.length === 0) {
-    return <Typography variant="body2" color="text.secondary">Задач пока нет</Typography>
+    return (
+      <Typography variant="body2" color="text.secondary">
+        {t('empty')}
+      </Typography>
+    )
   }
 
   return (

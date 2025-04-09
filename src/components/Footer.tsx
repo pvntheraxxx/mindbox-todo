@@ -5,6 +5,7 @@
 
 import React from 'react'
 import { Box, Typography, Button } from '@mui/material'
+import { useTranslation } from 'react-i18next'
 
 interface FooterProps {
   remainingCount: number
@@ -12,12 +13,14 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ remainingCount, clearCompleted }) => {
+  const { t } = useTranslation()
+
   return (
     <Box
       sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}
     >
       <Typography variant="body2" color="text.secondary">
-        Осталось задач: {remainingCount}
+        {t('remaining')}: {remainingCount}
       </Typography>
       <Button
         variant="outlined"
@@ -25,7 +28,7 @@ const Footer: React.FC<FooterProps> = ({ remainingCount, clearCompleted }) => {
         size="small"
         onClick={clearCompleted}
       >
-        Очистить завершённые
+        {t('clear')}
       </Button>
     </Box>
   )

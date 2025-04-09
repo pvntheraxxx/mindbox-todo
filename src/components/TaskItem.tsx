@@ -7,6 +7,7 @@ import React from 'react'
 import { Checkbox, IconButton, ListItem, ListItemText } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { Task } from '../types/task'
+import { useTranslation } from 'react-i18next'
 
 interface TaskItemProps {
   task: Task
@@ -15,11 +16,13 @@ interface TaskItemProps {
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
+  const { t } = useTranslation()
+
   return (
     <ListItem
       divider
       secondaryAction={
-        <IconButton edge="end" aria-label="delete" onClick={() => onDelete(task.id)}>
+        <IconButton edge="end" aria-label={t('delete')} onClick={() => onDelete(task.id)}>
           <DeleteIcon />
         </IconButton>
       }
@@ -33,7 +36,10 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
       />
       <ListItemText
         primary={task.title}
-        sx={{ textDecoration: task.completed ? 'line-through' : 'none', color: task.completed ? 'gray' : 'inherit' }}
+        sx={{
+          textDecoration: task.completed ? 'line-through' : 'none',
+          color: task.completed ? 'gray' : 'inherit',
+        }}
       />
     </ListItem>
   )
